@@ -1,0 +1,42 @@
+grammar Style
+  rule lines
+    first:line more:(newline line)* {
+      def value
+        vals = []
+        vals << { :num => 1, :values => first.value }
+      end
+    }
+  end
+
+  rule line
+    (spaces)* line_content {
+      def value
+        [:line, text_value]
+      end
+    }
+  end
+
+  rule line_content
+    word* (spaces word)*
+  end
+
+  rule word
+    [\S]+
+  end
+  
+  rule spaces
+    total:(space)+ {
+      def value
+        total.text_value.length
+      end
+    }
+  end
+
+  rule space
+    [\x20]
+  end
+
+  rule newline
+    "\n" | [\n]
+  end
+end
