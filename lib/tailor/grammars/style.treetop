@@ -26,7 +26,7 @@ grammar Style
   end
 
   rule valueline
-    leading:(spaces)* content:(value comma)* trailing:value
+    leading:(spaces)* content:(value comma_no_space)* trailing:value
     {
       def values
         list = []
@@ -51,12 +51,16 @@ grammar Style
   end
 
   rule nakedvalue
-    (!(comma / newline ) .)*
+    (!(comma_no_space / newline ) .)*
   end
 
 	rule spaces
 		[\x20]+
 	end
+
+  rule comma_no_space
+    ',' &[\S]
+  end
 
   rule comma
     ','
