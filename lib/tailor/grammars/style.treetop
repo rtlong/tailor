@@ -30,7 +30,7 @@ grammar Style
     {
       def values
         list = []
-        list += leading.elements.collect { |lead| lead.text_value } if leading
+        list << leading.text_value.length if leading
         list += content.elements.collect { |c| c.value.text_value } if content
         list << trailing.text_value if trailing
         list
