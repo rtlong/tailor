@@ -1,0 +1,74 @@
+grammar Style
+	#rule file
+	#	( words / text )* {
+	#    def content
+	#      #elements.map{ |e| e.content }
+	#			elements.each do |e|
+	#				puts "e: #{e}"
+	#				puts "e.content: #{e.content}"
+	#			end
+	#    end
+	#  }
+	#end
+  rule lines
+    line more:(newline line)*
+    {
+      def values
+        vals = []
+        vals << { :num => 0, :values => line.values }
+        more.elements.each_with_index do |additional, i|
+					vals << { :num => i+1, :values => additional.line.values }
+				end
+        vals
+      end
+    }
+  end
+
+  rule line
+    valueline / emptyline
+  end
+
+  rule emptyline
+    '' {
+      def values
+        []
+      end
+    }
+  end
+
+  rule valueline
+    leading:(value comma)* trailing:value
+    {
+      def values
+        list = []
+        list += leading.elements.collect { |lead| lead.value.text_value } if leading
+        list << trailing.text_value if trailing
+        list
+      end
+    }
+  end
+
+  rule value
+    quotedvalue / nakedvalue
+  end
+
+  rule quotedvalue
+    '"' wrapped:( !'"' . / '""' )* '"' {
+      def text_value
+        wrapped.text_value.gsub(/""/,'"')
+      end
+    }
+  end
+
+  rule nakedvalue
+    (!(comma / newline ) .)*
+  end
+
+  rule comma
+    ','
+  end
+
+  rule newline
+    [\n]
+  end
+end
