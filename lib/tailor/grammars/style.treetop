@@ -4,9 +4,9 @@ grammar Style
     {
       def values
         vals = []
-        vals << { :num => 0, :values => line.values }
+        vals << { :num => 1, :values => line.values }
         more.elements.each_with_index do |additional, i|
-					vals << { :num => i+1, :values => additional.line.values }
+					vals << { :num => i+2, :values => additional.line.values }
 				end
         vals
       end
@@ -26,13 +26,13 @@ grammar Style
   end
 
   rule valueline
-    leading:(spaces)* content:(value comma_no_space)* trailing:value
+    leading:(spaces)* content:(value comma_problems)* trailing:value
     {
       def values
         list = []
         list << leading.text_value.length if leading
         list += content.elements.collect { |c| c.value.text_value } if content
-        list << trailing.text_value if trailing
+        #list << trailing.text_value if trailing
         list
       end
     }
@@ -51,11 +51,15 @@ grammar Style
   end
 
   rule nakedvalue
-    (!(comma_no_space / newline ) .)*
+    (!(comma_problems / newline ) .)*
   end
 
 	rule spaces
 		[\x20]+
+	end
+
+	rule comma_problems
+		comma_no_space
 	end
 
   rule comma_no_space
