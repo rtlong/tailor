@@ -1,15 +1,4 @@
 grammar Style
-	#rule file
-	#	( words / text )* {
-	#    def content
-	#      #elements.map{ |e| e.content }
-	#			elements.each do |e|
-	#				puts "e: #{e}"
-	#				puts "e.content: #{e.content}"
-	#			end
-	#    end
-	#  }
-	#end
   rule lines
     line more:(newline line)*
     {
@@ -37,11 +26,12 @@ grammar Style
   end
 
   rule valueline
-    leading:(value comma)* trailing:value
+    leading:(spaces)* content:(value comma)* trailing:value
     {
       def values
         list = []
-        list += leading.elements.collect { |lead| lead.value.text_value } if leading
+        list += leading.elements.collect { |lead| lead.text_value } if leading
+        list += content.elements.collect { |c| c.value.text_value } if content
         list << trailing.text_value if trailing
         list
       end
@@ -63,6 +53,10 @@ grammar Style
   rule nakedvalue
     (!(comma / newline ) .)*
   end
+
+	rule spaces
+		[\x20]+
+	end
 
   rule comma
     ','
