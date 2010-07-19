@@ -4,6 +4,9 @@ grammar Style
       def value
         vals = []
         vals << { :num => 1, :values => first.value }
+        more.elements.each_with_index do |additional, i|
+          vals << { :num => i+2, :values => additional.line.value}
+        end
       end
     }
   end
@@ -17,15 +20,28 @@ grammar Style
   end
 
   rule line_content
-    word* (spaces word)*
+    (word | comma_problems)* (spaces (word | comma_problems))*
+  end
+
+  rule comma_problems
+    more_than_one_space_after_comma
+  end
+
+  rule more_than_one_space_after_comma
+    comma more_than_one_space word
+  end
+
+  rule more_than_one_space
+    (space)2*
   end
 
   rule word
-    [\S]+
+    #[\S]+
+    !comma [\S]+
   end
   
   rule spaces
-    total:(space)+ {
+    (space)+ {
       def value
         total.text_value.length
       end
@@ -38,5 +54,9 @@ grammar Style
 
   rule newline
     "\n" | [\n]
+  end
+
+  rule comma
+    ','
   end
 end
