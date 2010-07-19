@@ -2,51 +2,77 @@ grammar Style
   rule lines
     first:line more:(newline line)* {
       def value
-        vals = []
-        vals << { :num => 1, :values => first.value }
-        more.elements.each_with_index do |additional, i|
-          vals << { :num => i+2, :values => additional.line.value}
-        end
+        #vals = []
+        #vals << { :num => 1, :values => first.value }
+        #more.elements.each_with_index do |additional, i|
+        #  vals << { :num => i+2, :values => additional.line.value}
+        #end
+				vals = []
+				lines.elements.each_with_index do |l, i|
+					if l.respond_to?('value')
+						vals << { :num => i+1, :values => l.value } 
+					end
+				end
       end
     }
   end
 
   rule line
-    (spaces)* line_content {
+    (comma_problems | spaces)* line_content {
       def value
-        [:line, text_value]
+				vals = []
+				vals << { :space_count => spaces.value, :line_content => 
+					line_content.value }
       end
     }
   end
 
   rule line_content
-    (word | comma_problems)* (spaces (word | comma_problems))*
+    leading:(comma_problems | word)* (comma_problems | spaces more:(word))* {
+			def value
+				vals = []
+				vals << leading
+				vals << more
+			end
+		}
   end
 
   rule comma_problems
-    more_than_one_space_after_comma
+    more_than_one_space_after_comma {
+			def value
+				[:comma_problems, text_value]
+			end
+		}
   end
 
   rule more_than_one_space_after_comma
-    comma more_than_one_space word
-  end
-
-  rule more_than_one_space
-    (space)2*
+    comma two_or_more_spaces
   end
 
   rule word
     #[\S]+
-    !comma [\S]+
+    (!comma [\S])+ {
+			def value
+				[:word, text_value]
+			end
+		}
   end
   
   rule spaces
-    (space)+ {
+    (two_or_more_spaces | space)+ {
       def value
-        total.text_value.length
+        spaces.text_value.length
       end
     }
   end
+
+	rule two_or_more_spaces
+		(space)2* {
+			def value
+				text.length
+			end
+		}
+	end
 
   rule space
     [\x20]
