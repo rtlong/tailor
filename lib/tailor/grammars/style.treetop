@@ -1,76 +1,33 @@
 grammar Style
-  rule lines
-    line more:(newline line)*
-    {
-      def values
-        vals = []
-        vals << { :num => 1, :values => line.values }
-        more.elements.each_with_index do |additional, i|
-					vals << { :num => i+2, :values => additional.line.values }
+	rule parent
+		(line)* {
+			def values
+				lines = []
+				elements.each do |e|
+					lines << [:line, e.text_value]
 				end
-        vals
-      end
-    }
-  end
-
-  rule line
-    valueline / emptyline
-  end
-
-  rule emptyline
-    '' {
-      def values
-        []
-      end
-    }
-  end
-
-  rule valueline
-    leading:(spaces)* content:(value comma_problems)* trailing:value
-    {
-      def values
-        list = []
-        list << leading.text_value.length if leading
-        list += content.elements.collect { |c| c.value.text_value } if content
-        #list << trailing.text_value if trailing
-        list
-      end
-    }
-  end
-
-  rule value
-    quotedvalue / nakedvalue
-  end
-
-  rule quotedvalue
-    '"' wrapped:( !'"' . / '""' )* '"' {
-      def text_value
-        wrapped.text_value.gsub(/""/,'"')
-      end
-    }
-  end
-
-  rule nakedvalue
-    (!(comma_problems / newline ) .)*
-  end
-
-	rule spaces
-		[\x20]+
+				lines
+			end
+		}
 	end
 
-	rule comma_problems
-		comma_no_space
+	rule line
+		any_content newline {
+			def line_content
+				any_content.the_content
+			end
+		}
 	end
 
-  rule comma_no_space
-    ',' &[\S]
-  end
+	rule any_content
+		[^\n]* {
+			def the_content
+				text_value
+			end
+		}
+	end
 
-  rule comma
-    ','
-  end
-
-  rule newline
-    [\n]
-  end
+	rule newline
+		"\r\n" / [\n\r]
+	end
 end
