@@ -3,8 +3,9 @@ grammar Style
 		(line)* {
 			def values
 				lines = []
-				elements.each do |e|
-					lines << [:line, e.text_value]
+				elements.each_with_index do |e,i|
+					lines << [:line, i, e.text_value]
+					e.line_content
 				end
 				lines
 			end
@@ -12,7 +13,7 @@ grammar Style
 	end
 
 	rule line
-		any_content newline {
+		any_content (comma_problem any_content)* newline {
 			def line_content
 				any_content.the_content
 			end
@@ -20,11 +21,15 @@ grammar Style
 	end
 
 	rule any_content
-		[^\n]* {
+ 		(comma_problem / [^\n])* {
 			def the_content
-				text_value
+				puts [:comma_problem, "'#{text_value}'"] if 
 			end
 		}
+	end
+
+	rule comma_problem
+		[\S] ',' [/\x20{2,}/]
 	end
 
 	rule newline
