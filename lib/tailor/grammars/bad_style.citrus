@@ -1,65 +1,84 @@
-grammar Style
-  rule lines
-    first:line more:(newline line)* {
-      def value
+# Commas should always be preceded by anything !=' '.
+# Commas should always be followed by 1 space, unless:
+# * in a set of block variables
+# * at the end of a line
+# 
+# Since I want to detec bac style, this should be a grammar for bad style!
+grammar BadStyle
+  #rule lines
+  #  first:line more:(newline line)* {
+  #    def value
         #vals = []
         #vals << { :num => 1, :values => first.value }
         #more.elements.each_with_index do |additional, i|
         #  vals << { :num => i+2, :values => additional.line.value}
         #end
-				vals = []
-				lines.elements.each_with_index do |l, i|
-					if l.respond_to?('value')
-						vals << { :num => i+1, :values => l.value } 
-					end
-				end
-      end
-    }
-  end
+	#			vals = []
+	#			lines.elements.each_with_index do |l, i|
+	#				if l.respond_to?('value')
+	#					vals << { :num => i+1, :values => l.value } 
+	#				end
+	#			end
+  #    end
+  #  }
+  #end
 
-  rule line
-    (comma_problems | spaces)* line_content {
-      def value
-				vals = []
-				vals << { :space_count => spaces.value, :line_content => 
-					line_content.value }
-      end
-    }
-  end
+  #rule line
+  #  (comma_problems | spaces)* line_content {
+  #    def value
+	#			vals = []
+	#			vals << { :space_count => spaces.value, :line_content => 
+	#				line_content.value }
+  #    end
+  #  }
+  #end
 
-  rule line_content
-    leading:(comma_problems | word)* (comma_problems | spaces more:(word))* {
-			def value
-				vals = []
-				vals << leading
-				vals << more
-			end
-		}
-  end
+  #rule line_content
+  #  leading:(comma_problems | word)* (comma_problems | spaces more:(word))* {
+	#		def value
+	#			vals = []
+	#			vals << leading
+	#			vals << more
+	#		end
+	#	}
+  #end
+
+	rule parent
+		(comma_problems| comma_word | .)*
+	end
 
   rule comma_problems
-    more_than_one_space_after_comma {
+    #more_than_one_space_after_comma {
+    space_before_comma {
 			def value
 				[:comma_problems, text_value]
 			end
 		}
   end
 
-  rule more_than_one_space_after_comma
-    comma two_or_more_spaces
-  end
+	rule comma_word
+		'comma'
+	end
 
-  rule word
+	rule space_before_comma
+		/\S\x20+\,/
+	end
+
+  #rule more_than_one_space_after_comma
+  #  comma two_or_more_spaces
+  #end
+
+  #rule word
     #[\S]+
-    (!comma [\S])+ {
-			def value
-				[:word, text_value]
-			end
-		}
-  end
+  #(!comma [\S])+ {*/
+	#		def value
+	#			[:word, text_value]
+	#		end
+	#	}
+  #end
   
   rule spaces
-    (two_or_more_spaces | space)+ {
+    (two_or_more_spaces | space) {
       def value
         spaces.text_value.length
       end
