@@ -44,12 +44,56 @@ grammar BadStyle
   #end
 
 	rule parent
-		(comma_problems| square_bracket_problems | .)*
+		(comma_problems | 
+			square_bracket_problems | 
+			curly_brace_problems |
+			.)*
 	end
 
+	##
+	# {} problems
+	rule curly_brace_problems
+		space_after_open_cb_in_string_interpolation |
+		space_before_closed_cb_in_string_interpolation |
+		no_space_before_open_curly_brace |
+		no_space_after_open_curly_brace |
+		no_space_before_closed_curly_brace
+	end
+
+	rule space_after_open_cb_in_string_interpolation
+ 		open_string_interpolation space
+	end
+
+	rule space_before_closed_cb_in_string_interpolation
+		'#{ thing }'
+	end
+
+	rule no_space_before_open_curly_brace
+		[\S] &'{'
+	end
+
+	rule no_space_after_open_curly_brace
+		'{' [\S]
+	end
+
+	rule no_space_before_closed_curly_brace
+		[\S] '}'
+	end
+
+	rule closed_string_interpolation
+		&(open_string_interpolation .*) '}'
+	end
+
+	rule open_string_interpolation
+		'#{'
+	end
+
+	##
+	# [] problems
 	rule square_bracket_problems
 		space_before_open_bracket |
-		space_after_open_bracket
+		space_after_open_bracket |
+		space_before_closed_bracket
 	end
 
 	rule space_before_open_bracket
@@ -59,6 +103,10 @@ grammar BadStyle
 
 	rule space_after_open_bracket
 		'[' space+
+	end
+
+	rule space_before_closed_bracket
+		space+ ']'
 	end
 
 	##
