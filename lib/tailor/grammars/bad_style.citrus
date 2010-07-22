@@ -44,9 +44,25 @@ grammar BadStyle
   #end
 
 	rule parent
-		(comma_problems| .)*
+		(comma_problems| square_bracket_problems | .)*
 	end
 
+	rule square_bracket_problems
+		space_before_open_bracket |
+		space_after_open_bracket
+	end
+
+	rule space_before_open_bracket
+		# Not sure if \w+ should be !'='...
+		/\w+/ space+ '['
+	end
+
+	rule space_after_open_bracket
+		'[' space+
+	end
+
+	##
+	# Comma problems
   rule comma_problems
     space_before_comma | 
 		no_space_after_comma |
