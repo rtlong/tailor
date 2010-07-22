@@ -44,21 +44,18 @@ grammar BadStyle
   #end
 
 	rule parent
-		(comma_problems| comma_word | .)*
+		(comma_problems| .)*
 	end
 
   rule comma_problems
-    #more_than_one_space_after_comma {
-    space_before_comma | no_space_after_comma {
+    space_before_comma | 
+		no_space_after_comma |
+		more_than_one_space_after_comma {
 			def value
 				[:comma_problems, text_value]
 			end
 		}
   end
-
-	rule comma_word
-		'comma'
-	end
 
 	rule space_before_comma
 		/\S\x20+\,/
@@ -67,9 +64,10 @@ grammar BadStyle
 	rule no_space_after_comma
 		/\,\x20{0}\S/
 	end
-  #rule more_than_one_space_after_comma
-  #  comma two_or_more_spaces
-  #end
+
+  rule more_than_one_space_after_comma
+    comma two_or_more_spaces
+  end
 
   #rule word
     #[\S]+
