@@ -53,19 +53,22 @@ grammar BadStyle
 	##
 	# {} problems
 	rule curly_brace_problems
-		space_after_open_cb_in_string_interpolation |
 		space_before_closed_cb_in_string_interpolation |
+		space_after_open_cb_in_string_interpolation |
 		no_space_before_open_curly_brace |
 		no_space_after_open_curly_brace |
 		no_space_before_closed_curly_brace
 	end
 
 	rule space_after_open_cb_in_string_interpolation
- 		open_string_interpolation space
+ 		#open_string_interpolation space
+ 		'#{ ' 
 	end
 
 	rule space_before_closed_cb_in_string_interpolation
-		'#{ thing }'
+ 		#('#{ ' | '#{') [\w]* ' }'
+ 		(space_after_open_cb_in_string_interpolation | '#{') [\S]* ' }'
+		#'thing }'
 	end
 
 	rule no_space_before_open_curly_brace
@@ -73,11 +76,11 @@ grammar BadStyle
 	end
 
 	rule no_space_after_open_curly_brace
-		'{' [\S]
+		!('#') ('{' [\S])
 	end
 
 	rule no_space_before_closed_curly_brace
-		[\S] '}'
+		!(open_string_interpolation) [\S] '}'
 	end
 
 	rule closed_string_interpolation
