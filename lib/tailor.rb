@@ -4,8 +4,10 @@ $:.unshift(File.dirname(__FILE__)) unless
 
 require 'fileutils'
 require 'pathname'
+require 'citrus'
 require 'tailor/file_line'
 require 'tailor/spacing'
+Citrus.load(File.expand_path(File.dirname(__FILE__) + '/tailor/grammars/ruby_string'))
 
 module Tailor
   VERSION = '0.1.1'
@@ -50,6 +52,7 @@ module Tailor
     ruby_files_in_project.each do |file_name|
       problems = find_problems_in file_name
       files_and_problems[file_name] = problems
+      break
     end
 
     files_and_problems
@@ -94,124 +97,14 @@ module Tailor
     puts "#-------------------------------------------------------------------"
 
     @problem_count = 0
-    line_number = 1
-=begin
-    current_level = 0.0
-    next_level = 0.0
-    multi_line_next_level = 0.0
-    multi_line = false
-=end
 
-    source.each_line do |source_line|
-      line = FileLine.new(source_line, file_path, line_number)
-
-=begin
-      puts "line num: #{line_number}"
-if line.ends_with_comma?
-  puts "COMMA"
-end
-if line.ends_with_backslash?
-  puts "BACKSLASH"
-end
-if line.ends_with_operator?
-  puts "OPERATOR"
-end
-if line.unclosed_parenthesis?
-  puts "PARENTHESIS"
-end
-
-      multi_line_statement = line.multi_line_statement?
-
-      # If we're not in a multi-line statement, but this is the beginning of
-      # one...
-      if multi_line == false and multi_line_statement
-        multi_line = true
-        multi_line_next_level = current_level + 1.0
-        puts ":multi-line: current = #{current_level}; next = #{next_level}" +
-          "; multi_line_next = #{multi_line_next_level}"
-      # If we're already in a multi-line statement...
-      elsif multi_line == true and multi_line_statement
-        puts ":multi-line: current = #{current_level}; next = #{next_level}" +
-          "; multi_line_next = #{multi_line_next_level}"
-        # Keep current_line and next_line the same
-      elsif multi_line == true and !multi_line_statement and line.indent?
-        #next_level -= 1.0
-        puts ":multi-line: current = #{current_level}; next = #{next_level}" +
-          "; multi_line_next = #{multi_line_next_level}"
-      else
-        multi_line = false
-      end
-
-      if line.outdent?
-        current_level -= 1.0
-        next_level = current_level + 1.0
-        puts ":outdent: current = #{current_level}; next = #{next_level}" +
-          "; multi_line_next = #{multi_line_next_level}"
-      end
-
-      if line.contains_end?
-        current_level -= 1.0
-        next_level = current_level
-        puts ":end: current = #{current_level}; next = #{next_level}" +
-          "; multi_line_next = #{multi_line_next_level}"
-      end
-
-      if multi_line == true and !multi_line_statement and line.indent?
-      elsif line.indent?
-        next_level = current_level + 1.0
-        puts ":indent: current = #{current_level}; next = #{next_level}" +
-          "; multi_line_next = #{multi_line_next_level}"
-      end
-
-      if !line.indent? and !line.outdent? and !line.contains_end?
-        puts ":same: current = #{current_level}; next = #{next_level}" +
-          "; multi_line_next = #{multi_line_next_level}"
-      end
-
-      #if line.indent? or line.outdent? or line.contains_end?
-        if line.at_improper_level? current_level
-          @problem_count += 1
-        end
-      #end
-
-      # If this is the last line of the multi-line statement...
-      if multi_line == true and multi_line_statement
-        puts "Assinging current (#{current_level}) to multi_next (#{multi_line_next_level})"
-        current_level = multi_line_next_level
-      elsif multi_line == true and !multi_line_statement
-        multi_line = false
-        puts "Assigning current (#{current_level}) = next (#{next_level}) "
-        current_level = next_level
-      #elsif multi_line == false
-      else
-        puts "Assigning current (#{current_level}) = next (#{next_level}) "
-        current_level = next_level
-      end
-=end
-      @problem_count += line.spacing_problems
-
-      # Check for camel-cased methods
-      @problem_count += 1 if line.method_line? and line.camel_case_method?
-
-      # Check for non-camel-cased classes
-      @problem_count += 1 if line.class_line? and line.snake_case_class?
-
-      # Check for long lines
-      @problem_count += 1 if line.too_long?
-
-      # Check for spacing around operators
-=begin
-      OPERATORS.each_pair do |op_group, op_values|
-        op_values.each do |op|
-          @problem_count += 1 if line.no_space_before? op
-          @problem_count += 1 if line.no_space_after? op
-        end
-      end
-=end
-
-      line_number += 1
+    r = RubyString.parse(source.read)
+    #dqs = r.find :string_interpolation
+    dqs = r.find :double_quoted_string
+    dqs.each do |s|
+      #puts s.malformed? if s.malformed?
+      @problem_count += 1 if s.malformed?
     end
-
     @problem_count
   end
 
