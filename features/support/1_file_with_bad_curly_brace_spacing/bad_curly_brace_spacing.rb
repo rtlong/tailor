@@ -58,3 +58,6 @@ def a_method; one={}; end;
 # Skip on strings...
 a_string = "This is a #{thing}..."
 b_string = "This has #{Class.methods}"
+
+# Bad string interpolation
+a_string = "This is bad #{ thing }"
