@@ -1,8 +1,12 @@
 grammar RubyFile
 	include RubyString
 
+	rule file
+		lines
+	end
+
 	rule lines
-		(line | .)* {
+		line* {
 			def line_count
 				count = 1
 				count += 1 if line
@@ -11,6 +15,6 @@ grammar RubyFile
 	end
 
 	rule line
-		[\n]
+		(string | .) &[\n]?
 	end
 end

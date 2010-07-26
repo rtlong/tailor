@@ -1,7 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper.rb'
-require 'tailor/file_line'
 require 'citrus'
-require 'tailor/grammars/string'
+Citrus.load '../../lib/tailor/grammars/ruby_string'
 
 describe RubyString do
   context "#ruby_curly_block" do

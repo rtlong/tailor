@@ -1,6 +1,6 @@
 grammar RubyString
   rule string
-    (single_quoted_string | double_quoted_string | .)*
+    single_quoted_string | double_quoted_string
   end
 
   # This should be expanded to account for escaped single quotes.
