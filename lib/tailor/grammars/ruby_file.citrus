@@ -1,0 +1,16 @@
+grammar RubyFile
+	include RubyString
+
+	rule lines
+		(line | .)* {
+			def line_count
+				count = 1
+				count += 1 if line
+			end
+		}
+	end
+
+	rule line
+		[\n]
+	end
+end
