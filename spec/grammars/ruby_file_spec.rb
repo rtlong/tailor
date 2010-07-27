@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper.rb'
 require 'citrus'
-Citrus.load '../../lib/tailor/grammars/ruby_file'
+Citrus.load '../../lib/tailor/grammars/ruby_file.citrus'
 
 describe RubyFile do
   context "line counting" do
