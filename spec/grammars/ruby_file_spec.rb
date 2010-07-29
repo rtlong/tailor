@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + '/../spec_helper.rb'
-require 'citrus/debug'
+require 'citrus'
 
 describe RubyFile do
   context "line counting" do
@@ -20,6 +20,12 @@ describe RubyFile do
       s = r.find :double_quoted_string
       s.first.malformed?.should == true
     end
+
+=begin
+    it "should report problem and the line it's on" do
+      r = RubyFile.parse("\"This is \#{ foo }\"\ndef blah;end;")
+    end
+=end
   end
 
   context "find Ruby types" do
@@ -33,6 +39,13 @@ describe RubyFile do
       r = RubyFile.parse('s = "This is a string"\nt = "Another string!"')
       r.strings.class.should == Array
       r.strings.length.should == 2
+    end
+  end
+
+  context "reports problems" do
+    it "should report a problem with bad string interpolation" do
+      r = RubyFile.parse("\"This is \#{ foo }\"\ndef blah;end;")
+      r.style_errors.first.should == "\"This is \#{ foo }\""
     end
   end
 end
