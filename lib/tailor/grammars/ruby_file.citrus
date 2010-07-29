@@ -2,7 +2,14 @@ grammar RubyFile
 	include RubyString
 
 	rule file
-		lines
+		lines {
+			def strings
+				find(:string)
+			end
+
+			def style_errors
+			end
+		}
 	end
 
 	rule lines

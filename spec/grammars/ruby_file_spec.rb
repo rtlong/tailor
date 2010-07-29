@@ -1,6 +1,5 @@
 require File.dirname(__FILE__) + '/../spec_helper.rb'
-require 'citrus'
-Citrus.load '../../lib/tailor/grammars/ruby_file.citrus'
+require 'citrus/debug'
 
 describe RubyFile do
   context "line counting" do
@@ -20,6 +19,20 @@ describe RubyFile do
 
       s = r.find :double_quoted_string
       s.first.malformed?.should == true
+    end
+  end
+
+  context "find Ruby types" do
+    it "should find a string" do
+      r = RubyFile.parse('s = "This is a string"')
+      r.strings.class.should == Array
+      r.strings.length.should == 1
+    end
+
+    it "should find 2 strings" do
+      r = RubyFile.parse('s = "This is a string"\nt = "Another string!"')
+      r.strings.class.should == Array
+      r.strings.length.should == 2
     end
   end
 end
