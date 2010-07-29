@@ -92,4 +92,32 @@ describe RubyString do
       r.contains_malformed_interpolation?.should be_true
     end
   end
+
+  context "find style errors in double quoted strings" do
+    it "should find bad style with string interpolation" do
+      s = '"some text #{ some_var }"'
+      r = RubyString.parse(s, :root => :double_quoted_string)
+      r.style_errors.should == s
+    end
+
+    it "should NOT find bad style with good string interpolation" do
+      s = '"some text #{some_var}"'
+      r = RubyString.parse(s, :root => :double_quoted_string)
+      r.style_errors.should be_nil
+    end
+  end
+
+  context "find style errors from parent level" do
+    it "should find bad style with string interpolation" do
+      s = '"some text #{ some_var }"'
+      r = RubyString.parse(s)
+      r.style_errors.should == s
+    end
+
+    it "should NOT find bad style with good string interpolation" do
+      s = '"some text #{some_var}"'
+      r = RubyString.parse(s)
+      r.style_errors.should be_nil
+    end
+  end
 end

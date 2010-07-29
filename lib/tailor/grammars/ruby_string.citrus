@@ -1,6 +1,12 @@
 grammar RubyString
   rule string
-    single_quoted_string | double_quoted_string
+    single_quoted_string | double_quoted_string {
+			def style_errors
+				if malformed?
+					text
+				end
+			end
+		}
   end
 
   # This should be expanded to account for escaped single quotes.
@@ -11,10 +17,6 @@ grammar RubyString
   # This should be expanded to account for escaped double quotes.
   rule double_quoted_string
     ('"' (string_interpolation | !'"' .)* '"') {
-			def malformed?
-				contains_malformed_interpolation?
-			end
-
       def interpolations
         find(:string_interpolation)
       end
@@ -22,6 +24,10 @@ grammar RubyString
       def contains_malformed_interpolation?
         interpolations.any? {|s| s.malformed? }
       end
+
+			def malformed?
+				contains_malformed_interpolation?
+			end
     }
   end
 
