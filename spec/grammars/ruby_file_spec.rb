@@ -47,5 +47,10 @@ describe RubyFile do
       r = RubyFile.parse("\"This is \#{ foo }\"\ndef blah;end;")
       r.style_errors.first.should == "\"This is \#{ foo }\""
     end
+
+    it "should report 2 problems with bad string interpolation" do
+      r = RubyFile.parse("\"This is \#{ foo }\"\n\"This is \#{ bar}\";")
+      r.style_errors[1].should == "\"This is \#{ bar}\""
+    end
   end
 end
