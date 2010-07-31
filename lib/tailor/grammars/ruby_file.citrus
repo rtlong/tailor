@@ -3,10 +3,19 @@ grammar RubyFile
 
 	rule file
 		lines {
+			##
+			# Returns a list of all grammar objects of type 'string'.
+			# 
+			# @return [Array] An Array of Citrus::Match objects of type 'string'.
 			def strings
 				find(:string)
 			end
 
+			##
+			# Returns a list of all problems in the file.
+			# 
+			# @return [Array<Hash>] A list of all problems in the file, where each
+			# 	element is a Hash containing info about the problem.
 			def style_errors
 				errors = []
 
