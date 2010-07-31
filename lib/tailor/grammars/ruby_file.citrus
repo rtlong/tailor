@@ -1,6 +1,9 @@
 grammar RubyFile
 	include RubyString
 
+	# TODO: Change line rule to: (string | rest_of_line)*
+	# TODO: Add newline rule
+	# TODO: Get rid of lines rule
 	rule file
 		lines {
 			##
