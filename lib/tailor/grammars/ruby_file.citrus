@@ -12,13 +12,17 @@ grammar RubyFile
 
 				strings.each do |s|
 					error = {}
-					error[:line] = 1
+					error[:line] = line_number(s)
 					error[:problem_text] = s.style_errors
 
 					errors << error
 				end
 
 				errors
+			end
+
+			def line_number(match)
+				false
 			end
 		}
 	end
