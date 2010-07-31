@@ -21,11 +21,12 @@ describe RubyFile do
       s.first.malformed?.should == true
     end
 
-=begin
     it "should report problem and the line it's on" do
       r = RubyFile.parse("\"This is \#{ foo }\"\ndef blah;end;")
+      r.style_errors.length.should == 1
+      r.style_errors.first[:line].should == 1
+      r.style_errors.first[:problem_text].should == "\"This is \#{ foo }\""
     end
-=end
   end
 
   context "find Ruby types" do
