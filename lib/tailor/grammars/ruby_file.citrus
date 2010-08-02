@@ -29,22 +29,24 @@ grammar RubyFile
 			end
 
 			def line_number(match)
-				find(match.name)
+				#find(match.name)
+				'meow'
 			end
 		}
 	end
 
 	rule lines
-		line* {
-			def line_count
-				count = 1
-				count += 1 if line
-			end
-		}
+		#line* {
+		line more_lines:(newline line)*
 	end
 
 	rule line
-		(string | .) &newline?
+		#(string | .) &newline?
+		(string | rest_of_line*) &newline?
+	end
+
+	rule rest_of_line
+		[^\n]
 	end
 
 	rule newline
