@@ -18,9 +18,8 @@ grammar RubyFile
 			# @return [Array<Hash>] A list of all problems in the file, where each
 			# 	element is a Hash containing info about the problem.
 			def style_errors
-				error = {}
-
 				errors = strings.map do |s|
+					error = {}
 					error[:line] = line_number_of(s)
 					error[:problem_text] = s.style_errors
 					error
