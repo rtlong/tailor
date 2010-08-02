@@ -42,7 +42,7 @@ grammar RubyFile
 
 	rule line
 		#(string | .) &newline?
-		(string | rest_of_line*) &newline?
+		(string | rest_of_line)* &newline?
 	end
 
 	rule rest_of_line

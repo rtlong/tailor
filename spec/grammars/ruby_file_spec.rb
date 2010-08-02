@@ -4,8 +4,6 @@ require 'citrus'
 describe RubyFile do
   it "should do what I say" do
     r = RubyFile.parse("line 1\nline 2\n")
-    puts r
-    pp r
   end
 
   context "line counting" do
