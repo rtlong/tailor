@@ -17,6 +17,13 @@ describe RubyFile do
       r.style_errors.first[:line].should == 1
       r.style_errors.first[:problem_text].should == "\"This is \#{ foo }\""
     end
+
+    it "should report problem and the line it's on when on second line" do
+      r = RubyFile.parse("# Comment line\n\"This is \#{ foo }\"\ndef blah;end;", :enable_memo => true)
+      r.style_errors.length.should == 1
+      r.style_errors.first[:line].should == 2
+      r.style_errors.first[:problem_text].should == "\"This is \#{ foo }\""
+    end
   end
 
   context "find Ruby types" do
