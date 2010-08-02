@@ -4,6 +4,12 @@ require 'citrus'
 describe RubyFile do
   it "should do what I say" do
     r = RubyFile.parse("line 1\nline 2\n")
+#p r
+p r.names
+p r.methods
+    r.matches.each do |match|
+      puts match.names
+    end
   end
 
   context "line counting" do
@@ -33,6 +39,12 @@ describe RubyFile do
       r = RubyFile.parse('s = "This is a string"\nt = "Another string!"')
       r.strings.class.should == Array
       r.strings.length.should == 2
+    end
+
+    it "should find 0 strings" do
+      r = RubyFile.parse('s = String.new')
+      r.strings.class.should == Array
+      r.strings.length.should == 0
     end
   end
 
