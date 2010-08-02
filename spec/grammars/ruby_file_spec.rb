@@ -2,25 +2,16 @@ require File.dirname(__FILE__) + '/../spec_helper.rb'
 require 'citrus'
 
 describe RubyFile do
-  it "should do what I say" do
-    r = RubyFile.parse("line 1\nline 2\n")
-#p r
-p r.names
-p r.methods
-    r.matches.each do |match|
-      puts match.names
-    end
-  end
-
   context "line counting" do
     it "should count 2 lines of code with a bad string interpolation" do
       r = RubyFile.parse("\"This is \#{ foo }\"\ndef blah;end;")
+      r.find(:line).count.should == 2
 
       s = r.find :double_quoted_string
       s.first.malformed?.should == true
     end
 
-    it "should report problem and the line it's on" do
+    it "should report problem and the line it's on when on first line" do
       r = RubyFile.parse("\"This is \#{ foo }\"\ndef blah;end;", :enable_memo => true)
       r.style_errors.length.should == 1
       r.style_errors.first[:line].should == 1

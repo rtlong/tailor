@@ -1,7 +1,6 @@
 grammar RubyFile
 	include RubyString
 
-	# TODO: Change line rule to: (string | rest_of_line)*
 	# TODO: Get rid of lines rule
 	rule file_content
 		lines {
@@ -22,21 +21,49 @@ grammar RubyFile
 				error = {}
 
 				errors = strings.map do |s|
-					error[:line] = line_number(s)
+					error[:line] = line_number_of(s)
 					error[:problem_text] = s.style_errors
 					error
 				end
 			end
 
-			def line_number(match)
-				#find(match.name)
-				'meow'
+			##
+			# Returns a list of the offsets of all newlines in the file.  When we
+			# know at which point the newlines occur, then we can compare matches to
+			# elements in this array to then determine which line of the file the
+			# match occurs in.
+			# 
+			# @return [Array<Fixnum>] The array of offsets of all newline matches.
+			def newline_offsets
+				newline_chars = find(:newline)
+				newline_offsets = newline_chars.map do |eol|
+					eol.offset
+				end
+
+				newline_offsets
+			end
+
+			##
+			# Returns the line number a given match occurs on.
+			# 
+			# @param [Citrus::Match] The Match to find the line number for.
+			# @return [Fixnum] The line number of the match provided.
+			def line_number_of match
+				#puts "newline_offsets: #{newline_offsets}"
+
+				match = find(match.name)
+				#puts "match offset: #{match.first.offset}"
+				newline_offsets.each_with_index do |eol_offset, i|
+					if match.first.offset < eol_offset
+						return i+1
+					end
+				end
 			end
 		}
 	end
 
 	rule lines
-		line more_lines:(newline line)*
+		line (newline line)*
 	end
 
 	rule line
