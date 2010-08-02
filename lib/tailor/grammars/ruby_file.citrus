@@ -36,12 +36,10 @@ grammar RubyFile
 	end
 
 	rule lines
-		#line* {
 		line more_lines:(newline line)*
 	end
 
 	rule line
-		#(string | .) &newline?
 		(string | rest_of_line)* &newline?
 	end
 
