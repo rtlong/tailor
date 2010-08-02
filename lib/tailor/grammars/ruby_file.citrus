@@ -2,7 +2,6 @@ grammar RubyFile
 	include RubyString
 
 	# TODO: Change line rule to: (string | rest_of_line)*
-	# TODO: Add newline rule
 	# TODO: Get rid of lines rule
 	rule file_content
 		lines {
@@ -30,7 +29,7 @@ grammar RubyFile
 			end
 
 			def line_number(match)
-				false
+				find(match.name)
 			end
 		}
 	end
@@ -45,6 +44,10 @@ grammar RubyFile
 	end
 
 	rule line
-		(string | .) &[\n]?
+		(string | .) &newline?
+	end
+
+	rule newline
+		[\n]
 	end
 end
