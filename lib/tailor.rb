@@ -4,7 +4,7 @@ $:.unshift(File.dirname(__FILE__)) unless
 
 require 'fileutils'
 require 'pathname'
-require 'citrus/debug'
+require 'citrus'
 require 'tailor/file_line'
 require 'tailor/spacing'
 Citrus.load(File.expand_path(File.dirname(__FILE__) + '/tailor/grammars/ruby_string'))
