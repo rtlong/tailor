@@ -10,38 +10,6 @@ describe RubyFile do
       s = r.find :double_quoted_string
       s.first.malformed?.should == true
     end
-
-    it "should report problem and the line it's on when on first line" do
-      r = RubyFile.parse("\"This is \#{ foo }\"\ndef blah;end;")
-      r.style_errors.length.should == 1
-      r.style_errors.first[:line].should == 1
-      r.style_errors.first[:problem_text].should == "\"This is \#{ foo }\""
-    end
-
-    it "should report problem and the line it's on when on second line" do
-      r = RubyFile.parse("# Comment line\n\"This is \#{ foo }\"\ndef blah;end;")
-      r.style_errors.length.should == 1
-      r.style_errors.first[:line].should == 2
-      r.style_errors.first[:problem_text].should == "\"This is \#{ foo }\""
-    end
-
-    it "should report problem and the line it's on when on first and third line" do
-      r = RubyFile.parse("\"This is \#{ foo }\"\ndef blah;end;\n\"This is \#{ foo}\"")
-      r.style_errors.length.should == 2
-      r.style_errors[0][:line].should == 1
-      r.style_errors[0][:problem_text].should == "\"This is \#{ foo }\""
-      r.style_errors[1][:line].should == 3
-      r.style_errors[1][:problem_text].should == "\"This is \#{ foo}\""
-    end
-
-    it "should report problem and the line it's on when on second and fourth line" do
-      r = RubyFile.parse("# Comment Line\n\"This is \#{ foo }\"\ndef blah;end;\n\"This is \#{ foo}\"")
-      r.style_errors.length.should == 2
-      r.style_errors[0][:line].should == 2
-      r.style_errors[0][:problem_text].should == "\"This is \#{ foo }\""
-      r.style_errors[1][:line].should == 4
-      r.style_errors[1][:problem_text].should == "\"This is \#{ foo}\""
-    end
   end
 
   context "find Ruby types" do
@@ -73,6 +41,42 @@ describe RubyFile do
     it "should report 2 problems with bad string interpolation" do
       r = RubyFile.parse("\"This is \#{ foo }\"\n\"This is \#{ bar}\"")
       r.style_errors[1][:problem_text].should == "\"This is \#{ bar}\""
+    end
+  end
+
+  context "line counting AND problem reporting" do
+    context "should report problem and the line it's on" do
+      it "when on first line" do
+        r = RubyFile.parse("\"This is \#{ foo }\"\ndef blah;end;")
+        r.style_errors.length.should == 1
+        r.style_errors.first[:line].should == 1
+        r.style_errors.first[:problem_text].should == "\"This is \#{ foo }\""
+      end
+
+      it "when on second line" do
+        r = RubyFile.parse("# Comment line\n\"This is \#{ foo }\"\ndef blah;end;")
+        r.style_errors.length.should == 1
+        r.style_errors.first[:line].should == 2
+        r.style_errors.first[:problem_text].should == "\"This is \#{ foo }\""
+      end
+
+      it "when on first and third line" do
+        r = RubyFile.parse("\"This is \#{ foo }\"\ndef blah;end;\n\"This is \#{ foo}\"")
+        r.style_errors.length.should == 2
+        r.style_errors[0][:line].should == 1
+        r.style_errors[0][:problem_text].should == "\"This is \#{ foo }\""
+        r.style_errors[1][:line].should == 3
+        r.style_errors[1][:problem_text].should == "\"This is \#{ foo}\""
+      end
+
+      it "when on second and fourth line" do
+        r = RubyFile.parse("# Comment Line\n\"This is \#{ foo }\"\ndef blah;end;\n\"This is \#{ foo}\"")
+        r.style_errors.length.should == 2
+        r.style_errors[0][:line].should == 2
+        r.style_errors[0][:problem_text].should == "\"This is \#{ foo }\""
+        r.style_errors[1][:line].should == 4
+        r.style_errors[1][:problem_text].should == "\"This is \#{ foo}\""
+      end
     end
   end
 end
