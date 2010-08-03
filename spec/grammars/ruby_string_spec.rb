@@ -120,10 +120,10 @@ describe RubyString do
       r.style_errors.should be_nil
     end
 
-    it "should report a summary of the problem" do
+    it "should report a summary of the bad string interpolation problem" do
       s = '"some text #{ some_var }"'
       r = RubyString.parse(s)
-      r.style_errors[:problem_text].should == s
+      r.style_errors[:summary].should == "Bad string interpolation"
     end
   end
 end

@@ -5,7 +5,7 @@ grammar RubyString
 				if malformed?
 					errors = {}
 					errors[:problem_text] = text
-					#errors[:summary] = summary
+					errors[:summary] = summary
 
 					errors
 				end
@@ -31,6 +31,10 @@ grammar RubyString
 
 			def malformed?
 				contains_malformed_interpolation?
+			end
+
+			def summary
+				return "Bad string interpolation" if contains_malformed_interpolation?
 			end
     }
   end
