@@ -42,6 +42,11 @@ describe RubyFile do
       r = RubyFile.parse("\"This is \#{ foo }\"\n\"This is \#{ bar}\"")
       r.style_errors[1][:problem_text].should == "\"This is \#{ bar}\""
     end
+
+    it "should report 0 problems with NO bad string interpolation" do
+      r = RubyFile.parse("\"This is \#{foo}\"\n\"This is \#{bar}\"")
+      r.style_errors.should be_nil
+    end
   end
 
   context "reports problem summaries" do
