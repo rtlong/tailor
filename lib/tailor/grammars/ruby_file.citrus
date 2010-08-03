@@ -48,13 +48,11 @@ grammar RubyFile
 			# @param [Citrus::Match] The Match to find the line number for.
 			# @return [Fixnum] The line number of the match provided.
 			def line_number_of match
-				#puts "newline_offsets: #{newline_offsets}"
-
-				match = find(match.name)
-				#puts "match offset: #{match.first.offset}"
-				newline_offsets.each_with_index do |eol_offset, i|
-					if match.first.offset < eol_offset
-						return i+1
+				newline_offsets.each_with_index do |eol_offset, index|
+					if match.offset > eol_offset
+						return(index + 2) if newline_offsets.last == eol_offset
+					else
+						return(index + 1)
 					end
 				end
 			end

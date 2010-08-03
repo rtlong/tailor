@@ -12,16 +12,24 @@ describe RubyFile do
     end
 
     it "should report problem and the line it's on when on first line" do
-      r = RubyFile.parse("\"This is \#{ foo }\"\ndef blah;end;", :enable_memo => true)
+      r = RubyFile.parse("\"This is \#{ foo }\"\ndef blah;end;")
       r.style_errors.length.should == 1
       r.style_errors.first[:line].should == 1
       r.style_errors.first[:problem_text].should == "\"This is \#{ foo }\""
     end
 
     it "should report problem and the line it's on when on second line" do
-      r = RubyFile.parse("# Comment line\n\"This is \#{ foo }\"\ndef blah;end;", :enable_memo => true)
+      r = RubyFile.parse("# Comment line\n\"This is \#{ foo }\"\ndef blah;end;")
       r.style_errors.length.should == 1
       r.style_errors.first[:line].should == 2
+      r.style_errors.first[:problem_text].should == "\"This is \#{ foo }\""
+    end
+
+    it "should report problem and the line it's on when on first and third line" do
+      r = RubyFile.parse("\"This is \#{ foo }\"\ndef blah;end;\n\"This is \#{ foo}\"")
+      r.style_errors.length.should == 2
+      r.style_errors[0][:line].should == 1
+      r.style_errors[1][:line].should == 3
       r.style_errors.first[:problem_text].should == "\"This is \#{ foo }\""
     end
   end
