@@ -5,8 +5,6 @@ $:.unshift(File.dirname(__FILE__)) unless
 require 'fileutils'
 require 'pathname'
 require 'citrus'
-require 'tailor/file_line'
-require 'tailor/spacing'
 Citrus.load(File.expand_path(File.dirname(__FILE__) + '/tailor/grammars/ruby_string'))
 Citrus.load(File.expand_path(File.dirname(__FILE__) + '/tailor/grammars/ruby_file'))
 
@@ -100,17 +98,9 @@ module Tailor
     @problem_count = 0
 
     r = RubyFile.parse(source.read)
-    #dqs = r.find :string_interpolation
-    dqs = r.find :double_quoted_string
-
-    dqs.each do |s|
-      if s.malformed?
-        @problem_count += 1
-        puts "Problem type: #{s.names}"
-        puts "Problem: #{s}"
-        pp s.matches
-      end
-    end
+    puts r.style_errors
+    @problem_count += r.style_errors.length
+    
     @problem_count
   end
 
