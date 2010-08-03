@@ -29,8 +29,18 @@ describe RubyFile do
       r = RubyFile.parse("\"This is \#{ foo }\"\ndef blah;end;\n\"This is \#{ foo}\"")
       r.style_errors.length.should == 2
       r.style_errors[0][:line].should == 1
+      r.style_errors[0][:problem_text].should == "\"This is \#{ foo }\""
       r.style_errors[1][:line].should == 3
-      r.style_errors.first[:problem_text].should == "\"This is \#{ foo }\""
+      r.style_errors[1][:problem_text].should == "\"This is \#{ foo}\""
+    end
+
+    it "should report problem and the line it's on when on second and fourth line" do
+      r = RubyFile.parse("# Comment Line\n\"This is \#{ foo }\"\ndef blah;end;\n\"This is \#{ foo}\"")
+      r.style_errors.length.should == 2
+      r.style_errors[0][:line].should == 2
+      r.style_errors[0][:problem_text].should == "\"This is \#{ foo }\""
+      r.style_errors[1][:line].should == 4
+      r.style_errors[1][:problem_text].should == "\"This is \#{ foo}\""
     end
   end
 
