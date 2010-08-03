@@ -44,6 +44,14 @@ describe RubyFile do
     end
   end
 
+  context "reports problem summaries" do
+    it "should summarize a problem with bad string interpolation" do
+      s = "\"This is \#{ foo }\""
+      r = RubyFile.parse(s)
+      r.style_errors.first[:summary].should == "Bad string interpolation"
+    end
+  end
+
   context "line counting AND problem reporting" do
     context "should report problem and the line it's on" do
       it "when on first line" do

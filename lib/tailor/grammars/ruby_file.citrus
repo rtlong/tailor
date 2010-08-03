@@ -21,7 +21,8 @@ grammar RubyFile
 				errors = strings.map do |s|
 					error = {}
 					error[:line] = line_number_of(s)
-					error[:problem_text] = s.style_errors
+					error[:problem_text] = s.style_errors[:problem_text]
+					error[:summary] = s.style_errors[:summary]
 					error
 				end
 			end
