@@ -3,7 +3,11 @@ grammar RubyString
     single_quoted_string | double_quoted_string {
 			def style_errors
 				if malformed?
-					text
+					errors = {}
+					errors[:problem_text] = text
+					#errors[:summary] = summary
+
+					errors
 				end
 			end
 		}
@@ -22,7 +26,7 @@ grammar RubyString
       end
 
       def contains_malformed_interpolation?
-        interpolations.any? {|s| s.malformed? }
+        interpolations.any? { |s| s.malformed? }
       end
 
 			def malformed?

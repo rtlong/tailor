@@ -97,7 +97,7 @@ describe RubyString do
     it "should find bad style with string interpolation" do
       s = '"some text #{ some_var }"'
       r = RubyString.parse(s)
-      r.style_errors.should == s
+      r.style_errors[:problem_text].should == s
     end
 
     it "should NOT find bad style with good string interpolation" do
@@ -111,13 +111,19 @@ describe RubyString do
     it "should find bad style with string interpolation" do
       s = '"some text #{ some_var }"'
       r = RubyString.parse(s)
-      r.style_errors.should == s
+      r.style_errors[:problem_text].should == s
     end
 
     it "should NOT find bad style with good string interpolation" do
       s = '"some text #{some_var}"'
       r = RubyString.parse(s)
       r.style_errors.should be_nil
+    end
+
+    it "should report a summary of the problem" do
+      s = '"some text #{ some_var }"'
+      r = RubyString.parse(s)
+      r.style_errors[:problem_text].should == s
     end
   end
 end
