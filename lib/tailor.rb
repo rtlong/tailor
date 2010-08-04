@@ -101,7 +101,8 @@ module Tailor
 
     unless r.style_errors.nil?
       r.style_errors.each do |error|
-        print_problem(error[:summary], file_path, error[:line])
+        message = "#{error[:summary]}: #{error[:problem_text]}"
+        print_problem(message, file_path, error[:line])
       end
 
       @problem_count += r.style_errors.length
