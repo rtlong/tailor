@@ -9,7 +9,7 @@ Citrus.load(File.expand_path(File.dirname(__FILE__) + '/tailor/grammars/ruby_str
 Citrus.load(File.expand_path(File.dirname(__FILE__) + '/tailor/grammars/ruby_file'))
 
 module Tailor
-  VERSION = '0.1.1'
+  VERSION = '0.1.2'
 
   # These operators should always have 1 space around them
   OPERATORS = {
