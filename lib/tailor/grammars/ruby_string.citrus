@@ -1,7 +1,7 @@
 grammar RubyString
   rule string
     single_quoted_string | double_quoted_string {
-			def style_errors
+			def local_style_errors
 				if malformed?
 					errors = {}
 					errors[:problem_text] = text

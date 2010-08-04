@@ -48,8 +48,8 @@ grammar RubyFile
 					errors = error_collection.map do |s|
 						error = {}
 						error[:line] = line_number_of(s)
-						error[:problem_text] = s.style_errors[:problem_text]
-						error[:summary] = s.style_errors[:summary]
+						error[:problem_text] = s.local_style_errors[:problem_text]
+						error[:summary] = s.local_style_errors[:summary]
 						error
 					end
 				end
@@ -106,8 +106,10 @@ grammar RubyFile
 
 	rule hard_tab
 		[\t] {
-			def malformed?
-				true
+			def malformed?; true; end;
+
+			def summary
+				return "[Spacing]  Line contains hard tabs"
 			end
 		}
 	end
