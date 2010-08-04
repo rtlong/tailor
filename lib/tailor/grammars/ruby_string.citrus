@@ -15,7 +15,11 @@ grammar RubyString
 
   # This should be expanded to account for escaped single quotes.
   rule single_quoted_string
-    "'" (!"'" .)* "'"
+    ("'" (!"'" .)* "'") {
+			def malformed?
+				false
+			end
+		}
   end
 
   # This should be expanded to account for escaped double quotes.

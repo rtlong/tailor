@@ -69,6 +69,11 @@ describe RubyString do
       r = RubyString.parse("'some text'", :root => :single_quoted_string)
       r.should == "'some text'"
     end
+
+    it "should not find itself malformed" do
+      r = RubyString.parse("'some text'", :root => :single_quoted_string)
+      r.malformed?.should be_false
+    end
   end
 
   context "#double_quoted_string" do
