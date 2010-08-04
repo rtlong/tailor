@@ -5,27 +5,37 @@ grammar RubyFile
 	rule file_content
 		lines {
 			##
-			# Returns a list of all grammar objects of type 'string'.
+			# Finds all errors for the given rule.
 			# 
-			# @return [Array] An Array of Citrus::Match objects of type 'string'.
-			def strings
-				find(:string)
+			# @param [Symbol] rule The rule to find errors for.  This rule must have
+			# 	the method #malformed? defined for it.
+			# @return [Array] The list of errors found for the given rule.  If no
+			# 	errors were found, an empty Array is returned.
+			def errors_for_rule(rule)
+				errors = []
+				matches = find(rule.to_sym)
+				matches.each do |match|
+					errors << match if match.malformed?
+				end
+
+				errors
 			end
 
 			##
-			# Returns a list of all string errors.
+			# Collects all style errors in to a single Array.
 			# 
-			# @return [Array] The list of string errors; nil if no errors are
-			# 	found.
-			def string_errors
-				errors = []
-				strings.each do |s|
-					errors << s if s.malformed?
+			# @return [Array] All style errors.  If none are found, the Array will
+			# 	be empty.
+			def error_collection
+				collection = []
+				rules_with_errors = [:string, :hard_tab]
+
+				rules_with_errors.each do |rule|
+					errors = errors_for_rule(rule)
+					collection.concat(errors) unless errors.nil?
 				end
 
-				return errors unless errors.empty?
-
-				nil
+				collection
 			end
 
 			##
@@ -34,8 +44,8 @@ grammar RubyFile
 			# @return [Array<Hash>] A list of all problems in the file, where each
 			# 	element is a Hash containing info about the problem.
 			def style_errors
-				unless string_errors.nil?
-					errors = string_errors.map do |s|
+				unless error_collection.nil?
+					errors = error_collection.map do |s|
 						error = {}
 						error[:line] = line_number_of(s)
 						error[:problem_text] = s.style_errors[:problem_text]
@@ -83,7 +93,7 @@ grammar RubyFile
 	end
 
 	rule line
-		(string | rest_of_line)* &newline?
+		(hard_tab | string | rest_of_line)* &newline?
 	end
 
 	rule rest_of_line
@@ -92,5 +102,13 @@ grammar RubyFile
 
 	rule newline
 		[\n]
+	end
+
+	rule hard_tab
+		[\t] {
+			def malformed?
+				true
+			end
+		}
 	end
 end

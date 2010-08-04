@@ -15,20 +15,23 @@ describe RubyFile do
   context "find Ruby types" do
     it "should find a string" do
       r = RubyFile.parse('s = "This is a string"')
-      r.strings.class.should == Array
-      r.strings.length.should == 1
+      strings = r.find(:string)
+      strings.class.should == Array
+      strings.length.should == 1
     end
 
     it "should find 2 strings" do
       r = RubyFile.parse('s = "This is a string"\nt = "Another string!"')
-      r.strings.class.should == Array
-      r.strings.length.should == 2
+      strings = r.find(:string)
+      strings.class.should == Array
+      strings.length.should == 2
     end
 
     it "should find 0 strings" do
       r = RubyFile.parse('s = String.new')
-      r.strings.class.should == Array
-      r.strings.length.should == 0
+      strings = r.find(:string)
+      strings.class.should == Array
+      strings.length.should == 0
     end
   end
 
@@ -45,7 +48,15 @@ describe RubyFile do
 
     it "should report 0 problems with NO bad string interpolation" do
       r = RubyFile.parse("\"This is \#{foo}\"\n\"This is \#{bar}\"")
-      r.style_errors.should be_nil
+      r.style_errors.should be_empty
+    end
+
+    it "should report a hard tab at the beginning of the line" do
+      r = RubyFile.parse("\t\"This is \#{foo}\"")
+require 'citrus/debug'
+pp r.find(:hard_tab)
+puts r.names
+      r.style_errors.first[:problem_text].should == "\t"
     end
   end
 
