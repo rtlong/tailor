@@ -4,6 +4,7 @@ $:.unshift(File.dirname(__FILE__)) unless
 
 require 'fileutils'
 require 'pathname'
+require 'term/ansicolor'
 require 'citrus'
 Citrus.load(File.expand_path(File.dirname(__FILE__) + '/tailor/grammars/ruby_string'))
 Citrus.load(File.expand_path(File.dirname(__FILE__) + '/tailor/grammars/ruby_file'))
@@ -51,7 +52,6 @@ module Tailor
     ruby_files_in_project.each do |file_name|
       problems = find_problems_in file_name
       files_and_problems[file_name] = problems
-      break
     end
 
     files_and_problems
@@ -98,8 +98,14 @@ module Tailor
     @problem_count = 0
 
     r = RubyFile.parse(source.read)
-    puts r.style_errors
-    @problem_count += r.style_errors.length
+
+    unless r.style_errors.nil?
+      r.style_errors.each do |error|
+        print_problem(error[:summary], file_path, error[:line])
+      end
+
+      @problem_count += r.style_errors.length
+    end
     
     @problem_count
   end
@@ -120,5 +126,19 @@ module Tailor
         puts "#{file_path.relative_path_from(Pathname.pwd)}"
       end
     end
+  end
+
+  ##
+  # Prints the file name and line number that the problem occured on.
+  #
+  # @param [String] Error message to print.
+  def self.print_problem(message, file_path, line_number)
+    line_info = "Problems in"
+    line_info += " #{file_path.relative_path_from(Pathname.pwd)}"
+    line_info += " [#{line_number}]:"
+
+    puts ""
+    puts line_info
+    puts Term::ANSIColor::red("\t" + message)
   end
 end
