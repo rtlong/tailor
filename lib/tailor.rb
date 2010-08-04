@@ -132,8 +132,11 @@ module Tailor
   ##
   # Prints the file name and line number that the problem occured on.
   #
-  # @param [String] Error message to print.
+  # @param [String] message Error message to print.
+  # @param [Pathname] file_path Path to the file the problem is from.
+  # @param [Fixnum] line_number Line number the problem was found on.
   def self.print_problem(message, file_path, line_number)
+    puts line_number.class
     line_info = "Problems in"
     line_info += " #{file_path.relative_path_from(Pathname.pwd)}"
     line_info += " [#{line_number}]:"
