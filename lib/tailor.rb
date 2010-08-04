@@ -101,7 +101,7 @@ module Tailor
 
     unless r.style_errors.nil?
       r.style_errors.each do |error|
-        message = "#{error[:summary]}: #{error[:problem_text]}"
+        message = "#{error[:summary]}: '#{error[:problem_text]}'"
         print_problem(message, file_path, error[:line])
       end
 
@@ -136,7 +136,6 @@ module Tailor
   # @param [Pathname] file_path Path to the file the problem is from.
   # @param [Fixnum] line_number Line number the problem was found on.
   def self.print_problem(message, file_path, line_number)
-    puts line_number.class
     line_info = "Problems in"
     line_info += " #{file_path.relative_path_from(Pathname.pwd)}"
     line_info += " [#{line_number}]:"
