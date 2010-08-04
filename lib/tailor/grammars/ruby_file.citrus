@@ -38,14 +38,26 @@ grammar RubyFile
 				collection
 			end
 
+			def local_style_errors
+				if malformed?
+					errors = {}
+					errors[:problem_text] = text
+					errors[:summary] = summary
+					
+					errors
+				end
+			end
+
 			##
 			# Returns a list of all problems in the file.
 			# 
 			# @return [Array<Hash>] A list of all problems in the file, where each
 			# 	element is a Hash containing info about the problem.
 			def style_errors
-				unless error_collection.nil?
-					errors = error_collection.map do |s|
+				all_error_hashes = error_collection
+
+				unless all_error_hashes.nil?
+					errors = all_error_hashes.map do |s|
 						error = {}
 						error[:line] = line_number_of(s)
 						error[:problem_text] = s.local_style_errors[:problem_text]
@@ -108,8 +120,14 @@ grammar RubyFile
 		[\t] {
 			def malformed?; true; end;
 
-			def summary
-				return "[Spacing]  Line contains hard tabs"
+			def local_style_errors
+				if malformed?
+					errors = {}
+					errors[:problem_text] = text
+					errors[:summary] = "[Spacing]  Line contains hard tabs"
+					
+					errors
+				end
 			end
 		}
 	end

@@ -53,9 +53,6 @@ describe RubyFile do
 
     it "should report a hard tab at the beginning of the line" do
       r = RubyFile.parse("\t\"This is \#{foo}\"")
-require 'citrus/debug'
-pp r.find(:hard_tab)
-puts r.names
       r.style_errors.first[:problem_text].should == "\t"
     end
   end
