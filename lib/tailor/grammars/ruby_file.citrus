@@ -28,7 +28,7 @@ grammar RubyFile
 			# 	be empty.
 			def error_collection
 				collection = []
-				rules_with_errors = [:string, :hard_tab]
+				rules_with_errors = [:string, :hard_tab, :line]
 
 				rules_with_errors.each do |rule|
 					errors = errors_for_rule(rule)
@@ -101,11 +101,35 @@ grammar RubyFile
 	end
 
 	rule lines
-		line (newline line)*
+		(line (newline line)*) {
+			def malformed?
+				if line.malformed?
+					return true
+				end
+
+				false
+			end
+		}
 	end
 
 	rule line
-		(hard_tab | string | rest_of_line)* &newline?
+		((hard_tab | string | rest_of_line)* &newline?) {
+			def malformed?
+				length = text.length
+				
+				length > 80 ? true : false
+			end
+
+			def local_style_errors
+				if malformed?
+					errors = {}
+					errors[:problem_text] = text
+					errors[:summary] = "Line is >80 characters (#{text.length})"
+
+					errors
+				end
+			end
+		}
 	end
 
 	rule rest_of_line

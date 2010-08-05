@@ -22,7 +22,7 @@ else
     end
 
     # Check the requested files/dirs for problems
-    files_and_problems = Tailor.check path_to_check
+    files_and_problems = Tailor.check(path_to_check)
 
     # Print summary of the problems we found
     Tailor.print_report files_and_problems
