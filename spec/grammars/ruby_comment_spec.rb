@@ -12,6 +12,14 @@ describe RubyComment do
       s = "=begin\nclass Test\n=end"
       r = RubyComment.parse(s, :root => :begin_end_comment)
       r.should == s
+      r.names.should == [:begin_end_comment]
+    end
+
+    it "should skip nested begin/end comments" do
+      s = "=begin\nclass Test\n=begin\nend\n=end\n\n=end"
+      r = RubyComment.parse(s, :root => :begin_end_comment)
+      r.should == s
+      r.names.should == [:begin_end_comment]
     end
   end
 end
