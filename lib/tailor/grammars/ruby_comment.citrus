@@ -1,0 +1,20 @@
+grammar RubyComment
+	rule comment
+		#begin_end_comment | full_line_comment | end_line_comment
+		begin_end_comment
+	end
+
+	rule begin_end_comment
+		(/\=begin\n/ ruby_begin_end_comment_source '=end')
+	end
+
+	rule ruby_begin_end_comment_source
+		(!'=end' (begin_end_comment | .))*
+	end
+	
+	rule full_line_comment
+	end
+	
+	rule end_line_comment
+	end
+end
