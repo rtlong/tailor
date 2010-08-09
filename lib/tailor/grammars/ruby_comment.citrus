@@ -13,8 +13,14 @@ grammar RubyComment
 	end
 	
 	rule full_line_comment
+		([\s]* '#' comment_text [\n]?)
 	end
 	
 	rule end_line_comment
+		((!'#' .)* '#' comment_text [\n]?)
+	end
+
+	rule comment_text
+		(![\n] .)*
 	end
 end
