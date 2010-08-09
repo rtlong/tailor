@@ -7,6 +7,7 @@ require 'pathname'
 require 'term/ansicolor'
 require 'citrus'
 Citrus.load(File.expand_path(File.dirname(__FILE__) + '/tailor/grammars/ruby_string'))
+Citrus.load(File.expand_path(File.dirname(__FILE__) + '/tailor/grammars/ruby_comment'))
 Citrus.load(File.expand_path(File.dirname(__FILE__) + '/tailor/grammars/ruby_file'))
 
 module Tailor
@@ -97,8 +98,11 @@ module Tailor
 
     @problem_count = 0
 
-    r = RubyFile.parse(source.read)
-
+    r = RubyFile.parse(source.read, :enable_memo => true)
+require 'pp'
+require 'citrus/debug'
+pp r.matches
+pp r.names
     unless r.style_errors.nil?
       r.style_errors.each do |error|
         message = "#{error[:summary]}: '#{error[:problem_text]}'"

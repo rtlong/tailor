@@ -1,4 +1,6 @@
 grammar RubyComment
+	include RubyString
+
 	rule comment
 		#begin_end_comment | full_line_comment | end_line_comment
 		begin_end_comment
@@ -16,9 +18,9 @@ grammar RubyComment
 		([\s]* '#' comment_text [\n]?)
 	end
 	
-	rule end_line_comment
-		((!'#' .)* '#' comment_text [\n]?)
-	end
+	#rule end_line_comment
+	#	((!'#' .)* (!string) '#' comment_text [\n]?)
+	#end
 
 	rule comment_text
 		(![\n] .)*

@@ -1,6 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper.rb'
 require 'citrus'
-require 'citrus/debug'
+#require 'citrus/debug'
+Citrus.load '../../lib/tailor/grammars/ruby_string'
 Citrus.load '../../lib/tailor/grammars/ruby_comment'
 
 describe RubyComment do
@@ -85,6 +86,16 @@ describe RubyComment do
       it "should detect, with string interpolation in comment" do
         s = "variable = 'hi' # This is a #{self} comment"
         r = RubyComment.parse(s, :root => :end_line_comment)
+        r.should == s
+        r.names.should == [:end_line_comment]
+      end
+
+      it "should detect, with string interpolation before comment" do
+        test = 'test'
+        s = "variable = \"Test \#{test}\" # This is a comment"
+        r = RubyComment.parse(s, :root => :end_line_comment)
+#pp r
+pp r.matches
         r.should == s
         r.names.should == [:end_line_comment]
       end

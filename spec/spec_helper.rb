@@ -7,6 +7,7 @@ rescue LoadError
 end
 
 $:.unshift(File.dirname(__FILE__) + '/../lib')
+$:.unshift(File.dirname(__FILE__) + '/../lib/tailor/grammars')
 require 'tailor'
 require 'pp'
 

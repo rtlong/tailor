@@ -1,5 +1,6 @@
 grammar RubyFile
 	include RubyString
+	include RubyComment
 
 	# TODO: Get rid of lines rule
 	rule file_content
@@ -113,7 +114,7 @@ grammar RubyFile
 	end
 
 	rule line
-		((hard_tab | string | rest_of_line)* &newline?) {
+		((hard_tab | string | comment | rest_of_line)* &newline?) {
 			def malformed?
 				length = text.length
 				
@@ -133,11 +134,11 @@ grammar RubyFile
 	end
 
 	rule rest_of_line
-		[^\n]
+		[^\r\n] | [^\n]
 	end
 
 	rule newline
-		[\n]
+		[\r\n] | [\n]
 	end
 
 	rule hard_tab
