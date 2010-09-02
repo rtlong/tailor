@@ -3,7 +3,7 @@ grammar RubyComment
 
 	rule comment
 		#begin_end_comment | full_line_comment | end_line_comment
-		begin_end_comment
+		begin_end_comment | full_line_comment
 	end
 
 	rule begin_end_comment
@@ -15,12 +15,12 @@ grammar RubyComment
 	end
 	
 	rule full_line_comment
-		([\s]* '#' comment_text [\n]?)
+		([\s]* '#' comment_text &[\n])
 	end
 	
-	#rule end_line_comment
-	#	((!'#' .)* (!string) '#' comment_text [\n]?)
-	#end
+	rule end_line_comment
+		((!'#' .)* (!string) '#' comment_text [\n]?)
+	end
 
 	rule comment_text
 		(![\n] .)*
