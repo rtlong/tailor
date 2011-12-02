@@ -104,11 +104,11 @@ module Tailor
     source = File.open(file_name, 'r')
     file_path = Pathname.new(file_name)
 
-    puts ""
-    puts "#-------------------------------------------------------------------"
-    puts "# Looking for bad style in:"
-    puts "# \t'#{file_path}'"
-    puts "#-------------------------------------------------------------------"
+    preamble = <<-"PREAMBLE".gsub(/\A\s*/, '')
+      -------------------------------------------------------------------
+      Looking for bad style in:
+      > '#{file_path}'
+    PREAMBLE
 
     @problem_count = 0
     line_number = 1

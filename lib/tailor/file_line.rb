@@ -18,7 +18,7 @@ module Tailor
     include Tailor::Indentation
     include Term::ANSIColor
 
-    LINE_LENGTH_MAX = 80
+    LINE_LENGTH_MAX = 120
 
     # This passes the line of code to String (the parent) so that it can act
     # like a standard string.
